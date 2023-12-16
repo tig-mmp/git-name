@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Name</title>
+    <style>
+        #resultBranch,
+        #resultCommit {
+            cursor: pointer;
+            user-select: all;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Git Name</h1>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" value="tiago.pinto">
+
+    <label for="company">Company:</label>
+    <input type="text" id="company" value="INTRA">
+
+    <label for="number">Number:</label>
+    <input type="number" id="number" placeholder="Enter a number">
+
+    <label for="feature">Feature:</label>
+    <input type="text" id="feature" placeholder="Enter a feature">
+
+    <button onclick="generateBranchAndCommit()">Generate</button>
+
+    <h2>Result:</h2>
+    <p>Branch: <span id="resultBranch"></span></p>
+    <p>"Commit: <span id="resultCommit"></span></p>
+
+    <script>
+        function generateBranchAndCommit() {
+            const username = document.getElementById("username").value;
+            const company = document.getElementById("company").value;
+            const number = document.getElementById("number").value;
+            const feature = document.getElementById("feature").value.trim();
+
+            var camelCaseString = convertToCamelCase(feature);
+
+            const branch = "users/" + username + "/" + company + "-" + number + "/" + camelCaseString;
+            const commit = "[" + company + "-" + number + "]/" + feature;
+
+            document.getElementById("resultBranch").innerText = branch;
+            document.getElementById("resultCommit").innerText = commit;
+        }
+        function convertToCamelCase(input) {
+            return input
+                .replace(/\s+/g, "_")
+                .replace(/[^a-zA-Z0-9_]/g, "")
+                .toLowerCase()
+                .replace(/(?:^|_)([a-zA-Z0-9])/g, (match, char) => char.toUpperCase());
+        }
+    </script>
+
+</body>
+
+</html>

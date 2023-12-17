@@ -1,6 +1,4 @@
-import "./styles.css";
-
-const generate = (): void => {
+export const generate = (): void => {
   const username = (<HTMLInputElement>document.getElementById("username"))
     .value;
   const company = (<HTMLInputElement>document.getElementById("company")).value;
@@ -14,13 +12,14 @@ const generate = (): void => {
   const branch = `users/${username}/${company}-${number}/${featureCase}`;
   const commit = `[${company}-${number}]/${feature}`;
 
-  (<HTMLParagraphElement>document.getElementById("resultBranch")).innerText =
-    branch;
-  (<HTMLParagraphElement>document.getElementById("resultCommit")).innerText =
-    commit;
+  (<HTMLParagraphElement>document.getElementById("branch")).innerText = branch;
+  (<HTMLParagraphElement>document.getElementById("commit")).innerText = commit;
 };
 
-const convertCase = (input: string): string => {
+export const convertCase = (input?: string): string => {
+  if (!input) {
+    return "";
+  }
   const words = input.split(/\s+/);
   const firstWord = words.shift();
   return [

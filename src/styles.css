@@ -1,5 +1,5 @@
-#resultBranch,
-#resultCommit {
+#branch,
+#commit {
   cursor: pointer;
   user-select: all;
 }

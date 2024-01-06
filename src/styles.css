@@ -3,3 +3,51 @@
   cursor: pointer;
   user-select: all;
 }
+
+body {
+  font-family: "Noto Sans JP", "YuGothic", "Hiragino Kaku Gothic Pro", "Meiryo",
+    sans-serif;
+}
+.container {
+  width: 50vw;
+  margin: 0 auto 90px;
+}
+@media (max-width: 768px) {
+  .container {
+    width: 90vw;
+  }
+}
+
+.form-field ~ .form-field {
+  margin-top: 24px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 1.5rem;
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+form .form-field input {
+  border: none;
+  padding: 15px;
+  background: #f3f3f6;
+  width: -webkit-fill-available;
+}
+
+#generateButton {
+  width: -webkit-fill-available;
+  max-width: 305px;
+  background-color: #003692;
+  border: 0;
+  border-radius: 2px;
+  color: #ffffff;
+  height: 51px;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+footer {
+  text-align: center;
+  margin-top: 30px;
+}

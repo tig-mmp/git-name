@@ -11,23 +11,39 @@
 <body>
   <h1>Git Name</h1>
 
-  <label for="username">Username:</label>
-  <input type="text" id="username" value="tiago.pinto">
+  <div class="container">
+    <div class="form">
+      <form>
+        <div class="form-field">
+          <label for="username">Username:</label>
+          <input type="text" id="username" value="tiago.pinto">
+        </div>
 
-  <label for="company">Company:</label>
-  <input type="text" id="company" value="INTRA">
+        <div class="form-field">
+          <label for="company">Company:</label>
+          <input type="text" id="company" value="INTRA">
+        </div>
 
-  <label for="number">Number:</label>
-  <input type="number" id="number" placeholder="Enter a number">
+        <div class="form-field">
+          <label for="number">Number:</label>
+          <input type="number" id="number" placeholder="Enter a number">
+        </div>
 
-  <label for="feature">Feature:</label>
-  <input type="text" id="feature" placeholder="Enter a feature">
+        <div class="form-field">
+          <label for="feature">Feature:</label>
+          <input type="text" id="feature" placeholder="Enter a feature">
+        </div>
 
-  <button id="generateButton">Generate</button>
+        <footer>
+          <button id="generateButton" type="button">Generate</button>
+        </footer>
 
-  <h2>Result:</h2>
-  <p>Branch: <span id="branch"></span></p>
-  <p>Commit: <span id="commit"></span></p>
+        <h2>Result:</h2>
+        <p>Branch: <span id="branch"></span></p>
+        <p>Commit: <span id="commit"></span></p>
+      </form>
+    </div>
+  </div>
 
   <script defer type="module" src="./src/main.ts"></script>
 </body>

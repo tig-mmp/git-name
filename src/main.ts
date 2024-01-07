@@ -1,22 +1,49 @@
-export const generate = (): void => {
-  const username = (<HTMLInputElement>document.getElementById("username"))
-    .value;
-  const company = (<HTMLInputElement>document.getElementById("company")).value;
-  const number = (<HTMLInputElement>document.getElementById("number")).value;
-  const feature = (<HTMLInputElement>(
-    document.getElementById("feature")
-  )).value.trim();
+interface Elements {
+  usernameInput?: HTMLInputElement;
+  companyInput?: HTMLInputElement;
+  numberInput?: HTMLInputElement;
+  featureInput?: HTMLInputElement;
+  branchParagraph?: HTMLParagraphElement;
+  commitParagraph?: HTMLParagraphElement;
+  generateButton?: HTMLButtonElement;
+}
 
+export const generate = (): void => {
+  const {
+    usernameInput,
+    companyInput,
+    numberInput,
+    featureInput,
+    branchParagraph,
+    commitParagraph,
+  } = setupElements();
+  if (
+    !usernameInput ||
+    !companyInput ||
+    !numberInput ||
+    !featureInput ||
+    !branchParagraph ||
+    !commitParagraph
+  ) {
+    return;
+  }
+  const username = usernameInput.value;
+  const company = companyInput.value;
+  const number = numberInput.value;
+  let feature = featureInput.value.trim();
+  if (feature.endsWith(".")) {
+    feature = feature.slice(0, -1).trim();
+  }
   const featureCase = convertCase(feature);
 
   const branch = `users/${username}/${company}-${number}/${featureCase}`;
   const commit = `[${company}-${number}]/${feature}`;
 
-  (<HTMLParagraphElement>document.getElementById("branch")).innerText = branch;
-  (<HTMLParagraphElement>document.getElementById("commit")).innerText = commit;
+  branchParagraph.innerText = branch;
+  commitParagraph.innerText = commit;
 };
 
-export const convertCase = (input?: string): string => {
+const convertCase = (input?: string): string => {
   if (!input) {
     return "";
   }
@@ -29,10 +56,63 @@ export const convertCase = (input?: string): string => {
 };
 
 const mounted = () => {
-  const generateButton = document.getElementById("generateButton");
-  if (generateButton) {
-    generateButton.addEventListener("click", generate);
+  const {
+    usernameInput,
+    companyInput,
+    numberInput,
+    featureInput,
+    branchParagraph,
+    commitParagraph,
+    generateButton,
+  } = setupElements();
+  if (
+    !usernameInput ||
+    !companyInput ||
+    !numberInput ||
+    !featureInput ||
+    !generateButton
+  ) {
+    return;
   }
+  generateButton.addEventListener("click", generate);
+
+  [usernameInput, companyInput, numberInput, featureInput].forEach((input) =>
+    addOnEnterEvent(input)
+  );
+};
+
+const addOnEnterEvent = (input: HTMLInputElement | null) => {
+  if (!input) {
+    return;
+  }
+  input.addEventListener("keyup", (event) => {
+    if (event.key === "Enter") generate();
+  });
+};
+
+const setupElements = (): Elements => {
+  const usernameInput = <HTMLInputElement>document.getElementById("username");
+  const companyInput = <HTMLInputElement>document.getElementById("company");
+  const numberInput = <HTMLInputElement>document.getElementById("number");
+  const featureInput = <HTMLInputElement>document.getElementById("feature");
+  const branchParagraph = <HTMLParagraphElement>(
+    document.getElementById("branch")
+  );
+  const commitParagraph = <HTMLParagraphElement>(
+    document.getElementById("commit")
+  );
+  const generateButton = <HTMLButtonElement>(
+    document.getElementById("generateButton")
+  );
+  return {
+    usernameInput: usernameInput,
+    companyInput: companyInput,
+    numberInput: numberInput,
+    featureInput: featureInput,
+    branchParagraph: branchParagraph,
+    commitParagraph: commitParagraph,
+    generateButton: generateButton,
+  };
 };
 
 mounted();

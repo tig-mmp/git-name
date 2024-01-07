@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es6",
     "module": "esnext",
-    "rootDir": "./src",
+    "rootDirs": ["src/", "test/"],
     "outDir": "./dist",
     "strict": true,
     "types": ["node", "jest", "jsdom"],
@@ -11,5 +11,5 @@
     "moduleResolution": "node"
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"],
-  "exclude": ["node_modules", "./tests"]
+  "exclude": ["node_modules"]
 }

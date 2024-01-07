@@ -70,6 +70,8 @@ const mounted = () => {
     !companyInput ||
     !numberInput ||
     !featureInput ||
+    !branchParagraph ||
+    !commitParagraph ||
     !generateButton
   ) {
     return;
@@ -79,6 +81,7 @@ const mounted = () => {
   [usernameInput, companyInput, numberInput, featureInput].forEach((input) =>
     addOnEnterEvent(input)
   );
+  [branchParagraph, commitParagraph].forEach((element) => copyText(element));
 };
 
 const addOnEnterEvent = (input: HTMLInputElement | null) => {
@@ -87,6 +90,22 @@ const addOnEnterEvent = (input: HTMLInputElement | null) => {
   }
   input.addEventListener("keyup", (event) => {
     if (event.key === "Enter") generate();
+  });
+};
+
+const copyText = (element: HTMLParagraphElement) => {
+  element.addEventListener("click", () => {
+    const text = element.innerText ?? element.textContent;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    } else {
+      var textarea = document.createElement("textarea");
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
   });
 };
 

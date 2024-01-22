@@ -30,7 +30,7 @@ export const generate = (): void => {
   const username = usernameInput.value;
   const company = companyInput.value;
   const number = numberInput.value;
-  let feature = featureInput.value.trim();
+  let feature = featureInput.value.replace(">", "").replace("  ", " ").trim();
   if (feature.endsWith(".")) {
     feature = feature.slice(0, -1).trim();
   }

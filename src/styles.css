@@ -28,7 +28,9 @@ body {
   line-height: 1.8;
   margin-bottom: 8px;
 }
-form .form-field input {
+form .form-field input,
+form .form-field select
+ {
   border: none;
   padding: 15px;
   background: #f3f3f6;

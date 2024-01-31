@@ -1,6 +1,6 @@
 interface Elements {
   usernameInput?: HTMLInputElement;
-  companyInput?: HTMLInputElement;
+  companyInput?: HTMLSelectElement;
   numberInput?: HTMLInputElement;
   featureInput?: HTMLInputElement;
   branchParagraph?: HTMLParagraphElement;
@@ -84,12 +84,14 @@ const mounted = () => {
   [branchParagraph, commitParagraph].forEach((element) => copyText(element));
 };
 
-const addOnEnterEvent = (input: HTMLInputElement | null) => {
+const addOnEnterEvent = (
+  input: HTMLInputElement | HTMLSelectElement | null
+) => {
   if (!input) {
     return;
   }
   input.addEventListener("keyup", (event) => {
-    if (event.key === "Enter") generate();
+    if ("key" in event && event.key === "Enter") generate();
   });
 };
 
@@ -111,7 +113,7 @@ const copyText = (element: HTMLParagraphElement) => {
 
 const setupElements = (): Elements => {
   const usernameInput = <HTMLInputElement>document.getElementById("username");
-  const companyInput = <HTMLInputElement>document.getElementById("company");
+  const companyInput = <HTMLSelectElement>document.getElementById("company");
   const numberInput = <HTMLInputElement>document.getElementById("number");
   const featureInput = <HTMLInputElement>document.getElementById("feature");
   const branchParagraph = <HTMLParagraphElement>(

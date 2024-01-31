@@ -1,0 +1,10 @@
+services:
+  image:
+    build:
+      dockerfile: Dockerfile
+    container_name: git-name
+    command: yarn run dev
+    ports:
+      - 7890:5173
+    volumes:
+      - ./:/src

@@ -63,7 +63,7 @@ const testCases: TestCase[] = [
     number: "123",
     feature: "test > feature",
     expectedBranch: "users/testUser/testCompany-123/testFeature",
-    expectedCommit: "[testCompany-123]/test feature",
+    expectedCommit: "[testCompany-123]/test > feature",
   },
 ];
 

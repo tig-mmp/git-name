@@ -30,7 +30,7 @@ export const generate = (): void => {
   const username = usernameInput.value;
   const company = companyInput.value;
   const number = numberInput.value;
-  let feature = featureInput.value.replace(">", "").replace("  ", " ").trim();
+  let feature = featureInput.value.replace("  ", " ").trim();
   if (feature.endsWith(".")) {
     feature = feature.slice(0, -1).trim();
   }
@@ -47,7 +47,7 @@ const convertCase = (input?: string): string => {
   if (!input) {
     return "";
   }
-  const words = input.split(/\s+/);
+  const words = input.replace(">", "").split(/\s+/);
   const firstWord = words.shift();
   return [
     firstWord,

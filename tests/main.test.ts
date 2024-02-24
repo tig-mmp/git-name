@@ -65,6 +65,24 @@ const testCases: TestCase[] = [
     expectedBranch: "users/testUser/testCompany-123/testFeature",
     expectedCommit: "[testCompany-123]/test > feature",
   },
+  {
+    testName: "Test feature without colon sign",
+    username: "testUser",
+    company: "testCompany",
+    number: "123",
+    feature: "test : feature",
+    expectedBranch: "users/testUser/testCompany-123/testFeature",
+    expectedCommit: "[testCompany-123]/test : feature",
+  },
+  {
+    testName: "Test feature without double quotation mark sign",
+    username: "testUser",
+    company: "testCompany",
+    number: "123",
+    feature: "test &quot; feature",
+    expectedBranch: "users/testUser/testCompany-123/testFeature",
+    expectedCommit: '[testCompany-123]/test " feature',
+  },
 ];
 
 testCases.forEach((testCase) =>

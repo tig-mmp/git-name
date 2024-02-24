@@ -47,7 +47,7 @@ const convertCase = (input?: string): string => {
   if (!input) {
     return "";
   }
-  const words = input.replace(">", "").split(/\s+/);
+  const words = input.replace(/[/:*"<>|\\]/g, "").split(/\s+/);
   const firstWord = words.shift();
   return [
     firstWord,

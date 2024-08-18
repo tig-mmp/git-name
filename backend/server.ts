@@ -1,11 +1,25 @@
 import express from "express";
 import fs from "fs";
 import { Request, Response } from "express";
+import cors from "cors";
 import bodyParser from "body-parser";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const port = 3000;
 
+const allowedOrigin = process.env.ALLOWED_ORIGIN || "*";
+
+const corsOptions = {
+  origin: allowedOrigin,
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.post("/api/write", (req: Request, res: Response) => {

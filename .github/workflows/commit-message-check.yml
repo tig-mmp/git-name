@@ -1,0 +1,21 @@
+name: Commit Message Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  commit-message-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit messages
+        run: |
+          PREFIX="[GIT-"
+          COMMITS=$(git log ${{ github.event.pull_request.base.sha }}..${{ github.sha }} --pretty=format:"%s")
+
+          for COMMIT in $COMMITS; do
+            if [[ "$COMMIT" != "$PREFIX"* ]]; then
+              echo "Error: Commit message '$COMMIT' does not start with '$PREFIX'."
+              exit 1
+            fi
+          done

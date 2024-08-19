@@ -11,23 +11,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Verify Git Repository
-        run: |
-          echo "Checking if this is a git repository..."
-          git status
-          echo "Repository verified."
-
-      - name: Debugging - List Files
-        run: |
-          echo "Listing files in the directory to ensure repo is checked out:"
-          ls -la
-          echo "Current directory: $(pwd)"
-          echo "Git directory: $(git rev-parse --git-dir)"
+        with:
+          fetch-depth: 0
 
       - name: Check commit messages
         run: |
-          PREFIX="[GIT-"
+          PREFIX="[GIT-"  # Replace with your desired prefix
+
+          # Get the commit range from the base branch to the current HEAD
           COMMITS=$(git log ${{ github.event.pull_request.base.sha }}..${{ github.sha }} --pretty=format:"%s")
 
           echo "Commit messages found: $COMMITS"

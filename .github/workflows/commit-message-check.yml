@@ -12,12 +12,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Verify Git Repository
+        run: |
+          echo "Checking if this is a git repository..."
+          git status
+          echo "Repository verified."
+
+      - name: Debugging - List Files
+        run: |
+          echo "Listing files in the directory to ensure repo is checked out:"
+          ls -la
+          echo "Current directory: $(pwd)"
+          echo "Git directory: $(git rev-parse --git-dir)"
+
       - name: Check commit messages
         run: |
           PREFIX="[GIT-"
           COMMITS=$(git log ${{ github.event.pull_request.base.sha }}..${{ github.sha }} --pretty=format:"%s")
 
-          for COMMIT in "${COMMITS[@]}"; do
+          echo "Commit messages found: $COMMITS"
+
+          for COMMIT in $COMMITS; do
             if [[ "$COMMIT" != "$PREFIX"* ]]; then
               echo "Error: Commit message '$COMMIT' does not start with '$PREFIX'."
               exit 1

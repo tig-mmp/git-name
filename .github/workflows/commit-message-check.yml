@@ -16,10 +16,13 @@ jobs:
 
       - name: Check commit messages
         run: |
-          PREFIX="[GIT-"  # Replace with your desired prefix
+          PREFIX="[GIT-"
 
-          # Get the commit range from the base branch to the current HEAD
-          COMMITS=$(git log ${{ github.event.pull_request.base.sha }}..${{ github.sha }} --pretty=format:"%s")
+          # Determine the common ancestor (merge base) of the base branch and the current branch
+          BASE_COMMIT=$(git merge-base ${{ github.event.pull_request.base.sha }} HEAD)
+
+          # Get all commit messages between the base commit and the current HEAD
+          COMMITS=$(git log $BASE_COMMIT..HEAD --pretty=format:"%s")
 
           echo "Commit messages found: $COMMITS"
 

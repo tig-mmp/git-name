@@ -34,6 +34,16 @@ app.post("/api/write", (req: Request, res: Response) => {
   });
 });
 
+app.get("/api/read", (req: Request, res: Response) => {
+  fs.readFile("data.txt", "utf8", (err, data) => {
+    if (err) {
+      res.status(500).send("Error reading file");
+    } else {
+      res.send(data.replace(/\n/g, "<br>"));
+    }
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });

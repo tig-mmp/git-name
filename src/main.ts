@@ -41,6 +41,7 @@ export const generate = (): void => {
 
   branchParagraph.innerText = branch;
   commitParagraph.innerText = commit;
+  updateBackend(branch, commit);
 };
 
 const convertCase = (input?: string): string => {
@@ -134,6 +135,30 @@ const setupElements = (): Elements => {
     commitParagraph: commitParagraph,
     generateButton: generateButton,
   };
+};
+
+const updateBackend = async (branch: string, commit: string): Promise<void> => {
+  try {
+    writeDateInBackend(branch);
+    writeDateInBackend(commit);
+  } catch (error) {
+    console.error("Error writing data:", error);
+  }
+};
+
+const writeDateInBackend = async (data: string) => {
+  const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/write`;
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ data }),
+  });
+  if (!response.ok) {
+    console.log(response);
+  }
 };
 
 mounted();

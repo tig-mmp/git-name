@@ -22,7 +22,6 @@ header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
     $data = json_decode(file_get_contents("php://input"), true);
 
     if (isset($data["branch"]) && isset($data["commit"])) {
@@ -36,7 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         echo json_encode(["status" => "success", "message" => "Data saved successfully."]);
     } else {
-
         echo json_encode(["status" => "error", "message" => "Branch and commit are required."]);
     }
 }

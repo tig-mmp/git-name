@@ -37,7 +37,8 @@ form .form-field select
   width: -webkit-fill-available;
 }
 
-#generateButton {
+#generateButton,
+#findButton {
   width: -webkit-fill-available;
   max-width: 305px;
   background-color: #003692;

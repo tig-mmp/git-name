@@ -6,6 +6,7 @@ interface Elements {
   branchParagraph?: HTMLParagraphElement;
   commitParagraph?: HTMLParagraphElement;
   generateButton?: HTMLButtonElement;
+  findButton?: HTMLButtonElement;
 }
 
 export const generate = (): void => {
@@ -65,6 +66,7 @@ const mounted = () => {
     branchParagraph,
     commitParagraph,
     generateButton,
+    findButton,
   } = setupElements();
   if (
     !usernameInput ||
@@ -73,16 +75,75 @@ const mounted = () => {
     !featureInput ||
     !branchParagraph ||
     !commitParagraph ||
-    !generateButton
+    !generateButton ||
+    !findButton
   ) {
     return;
   }
   generateButton.addEventListener("click", generate);
+  findButton.addEventListener("click", findData);
 
   [usernameInput, companyInput, numberInput, featureInput].forEach((input) =>
     addOnEnterEvent(input)
   );
   [branchParagraph, commitParagraph].forEach((element) => copyText(element));
+};
+
+let currentIndex = 0;
+
+const findData = async (): Promise<void> => {
+  const {
+    usernameInput,
+    companyInput,
+    numberInput,
+    featureInput,
+    branchParagraph,
+    commitParagraph,
+  } = setupElements();
+
+  if (
+    !usernameInput ||
+    !companyInput ||
+    !numberInput ||
+    !featureInput ||
+    !branchParagraph ||
+    !commitParagraph
+  ) {
+    return;
+  }
+
+  const number = numberInput.value.trim();
+  const company = companyInput.value.trim();
+  const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/read.php`;
+
+  let url: string;
+
+  if (number) {
+    url = `${apiUrl}?number=${number}&company=${company}`;
+    currentIndex = 0;
+  } else {
+    url = `${apiUrl}?index=${currentIndex}`;
+    currentIndex++;
+  }
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const branch = data.data?.branch ?? null;
+    const commit = data.data?.commit ?? null;
+
+    if (branch && commit) {
+      branchParagraph.innerText = branch;
+      commitParagraph.innerText = commit;
+    } else {
+
+      branchParagraph.innerText = "";
+      commitParagraph.innerText = "";
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 };
 
 const addOnEnterEvent = (
@@ -126,6 +187,7 @@ const setupElements = (): Elements => {
   const generateButton = <HTMLButtonElement>(
     document.getElementById("generateButton")
   );
+  const findButton = <HTMLButtonElement>document.getElementById("findButton");
   return {
     usernameInput: usernameInput,
     companyInput: companyInput,
@@ -134,30 +196,25 @@ const setupElements = (): Elements => {
     branchParagraph: branchParagraph,
     commitParagraph: commitParagraph,
     generateButton: generateButton,
+    findButton: findButton,
   };
 };
 
 const updateBackend = async (branch: string, commit: string): Promise<void> => {
+  const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/write.php`;
+
   try {
-    writeDateInBackend(branch);
-    writeDateInBackend(commit);
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ branch, commit }),
+    });
+
+    const data = await response.json();
   } catch (error) {
-    console.error("Error writing data:", error);
-  }
-};
-
-const writeDateInBackend = async (data: string) => {
-  const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/write`;
-
-  const response = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ data }),
-  });
-  if (!response.ok) {
-    console.log(response);
+    console.error("Error:", error);
   }
 };
 

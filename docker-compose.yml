@@ -6,12 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: git-name
-    command: yarn run dev
+    command: sh -c "yarn install && yarn dev"
     ports:
       - 7890:5173
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
     working_dir: /usr/src/app
 
 

@@ -90,6 +90,7 @@ const mounted = () => {
 };
 
 let currentIndex = 0;
+let lastCompany: string | null = null;
 
 const findData = async (): Promise<void> => {
   const {
@@ -116,13 +117,22 @@ const findData = async (): Promise<void> => {
   const company = companyInput.value.trim();
   const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/read.php`;
 
-  let url: string;
-
+  const searchParams = new URLSearchParams();
   if (number) {
-    url = `${apiUrl}?number=${number}&company=${company}`;
+    searchParams.set("number", number);
+  }
+  if (company) {
+    searchParams.set("company", company);
+  }
+  if (currentIndex) {
+    searchParams.set("index", String(currentIndex));
+  }
+  let url = `${apiUrl}?${searchParams.toString()}`;
+
+  if (number || lastCompany !== company) {
     currentIndex = 0;
+    lastCompany = company;
   } else {
-    url = `${apiUrl}?index=${currentIndex}`;
     currentIndex++;
   }
 
@@ -137,7 +147,6 @@ const findData = async (): Promise<void> => {
       branchParagraph.innerText = branch;
       commitParagraph.innerText = commit;
     } else {
-
       branchParagraph.innerText = "";
       commitParagraph.innerText = "";
     }

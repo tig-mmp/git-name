@@ -15,52 +15,36 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
     $data = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
     $index = isset($_GET["index"]) ? (int) $_GET["index"] : null;
-    $number = isset($_GET["number"]) ? $_GET["number"] : null;
-    $company = isset($_GET["company"]) ? $_GET["company"] : null;
+    $number = $_GET["number"] ?? null;
+    $company = $_GET["company"] ?? null;
 
-    if ($company && $number) {
-        $filtered = array_filter($data, function ($line) use ($company, $number) {
-            $parts = explode(";", $line, 2);
+    if ($company) {
+        $data = array_filter($data, fn($line) => is_string($line) && str_contains($line, $company));
+    }
+    if ($number) {
+        $data = array_filter($data, function ($line) use ($number) {
+            $parts = is_string($line) ? explode(";", $line, 2) : [null, null];
             if (count($parts) !== 2) {
                 return false;
             }
             [$branch, $commit] = $parts;
-            return str_contains($branch, $company) &&
-                (str_contains($branch, "-$number/") || str_contains($commit, "-$number]"));
+            return str_contains($branch, "-$number/") || str_contains($commit, "-$number]");
         });
-
-        $filtered = array_values($filtered);
-
-        [$branch, $commit] = $filtered[0] ? explode(";", $filtered[0]) : [null, null];
-        echo json_encode(["data" => ["branch" => $branch, "commit" => $commit]]);
-    } elseif ($company && $index !== null) {
-        $filtered = array_values(array_filter(
-            $data,
-            fn($line) => str_contains($line, $company)
-        ));
-
-        $reverseIndex = count($filtered) - 1 - $index;
-
-        if (isset($filtered[$reverseIndex])) {
-            [$branch, $commit] = explode(";", $filtered[$reverseIndex]);
-        } elseif (isset($filtered[0])) {
-            [$branch, $commit] = explode(";", $filtered[0]);
-        } else {
-            [$branch, $commit] = [null, null];
-        }
-        echo json_encode(["data" => ["branch" => $branch, "commit" => $commit]]);
-    } elseif ($index !== null) {
-        $reverseIndex = count($data) - 1 - $index;
-        if (isset($data[$reverseIndex])) {
-            $parts = explode(";", $data[$reverseIndex], 2);
-            [$branch, $commit] = count($parts) === 2 ? $parts : [null, null];
-        } else {
-            $parts = explode(";", $data[0] ?? ";", 2);
-            [$branch, $commit] = count($parts) === 2 ? $parts : [null, null];
-        }
-
-        echo json_encode(["data" => ["branch" => $branch, "commit" => $commit]]);
-    } else {
-        echo json_encode(["data" => ["branch" => null, "commit" => null]]);
     }
+
+    $data = array_values(array: $data);
+
+    if (!empty($data)) {
+        if ($index !== null) {
+            $reverseIndex = count($data) - 1 - $index;
+            $line = $data[$reverseIndex] ?? $data[0];
+        } else {
+            $line = $data[0];
+        }
+        [$branch, $commit] = explode(";", $line, 2) + [null, null];
+    } else {
+        [$branch, $commit] = [null, null];
+    }
+
+    echo json_encode(["data" => ["branch" => $branch, "commit" => $commit]]);
 }

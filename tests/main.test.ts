@@ -1,4 +1,14 @@
-const { generate } = require("../src/main");
+import { enableFetchMocks } from "jest-fetch-mock";
+import { generate } from "../src/main";
+
+enableFetchMocks();
+
+beforeEach(() => {
+  fetchMock.resetMocks();
+  fetchMock.mockResponse(
+    JSON.stringify({ data: { branch: null, commit: null } })
+  );
+});
 
 interface TestCase {
   testName: string;

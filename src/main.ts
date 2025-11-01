@@ -1,3 +1,5 @@
+const API_BASE_URL = "http://localhost:8000";
+
 interface Elements {
   usernameInput?: HTMLInputElement;
   companyInput?: HTMLSelectElement;
@@ -115,7 +117,7 @@ const findData = async (): Promise<void> => {
 
   const number = numberInput.value.trim();
   const company = companyInput.value.trim();
-  const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/read.php`;
+  const apiUrl = `${API_BASE_URL}/read.php`;
 
   const searchParams = new URLSearchParams();
   if (number) {
@@ -210,7 +212,7 @@ const setupElements = (): Elements => {
 };
 
 const updateBackend = async (branch: string, commit: string): Promise<void> => {
-  const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/write.php`;
+  const apiUrl = `${API_BASE_URL}/write.php`;
 
   try {
     const response = await fetch(apiUrl, {

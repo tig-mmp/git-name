@@ -93,6 +93,7 @@ const mounted = () => {
 
 let currentIndex = 0;
 let lastCompany: string | null = null;
+let lastNumber: string | null = null;
 
 const findData = async (): Promise<void> => {
   const {
@@ -119,6 +120,14 @@ const findData = async (): Promise<void> => {
   const company = companyInput.value.trim();
   const apiUrl = `${API_BASE_URL}/read.php`;
 
+  if (number || lastNumber !== number || lastCompany !== company) {
+    currentIndex = 0;
+    lastCompany = company;
+    lastNumber = number;
+  } else {
+    currentIndex++;
+  }
+
   const searchParams = new URLSearchParams();
   if (number) {
     searchParams.set("number", number);
@@ -130,13 +139,6 @@ const findData = async (): Promise<void> => {
     searchParams.set("index", String(currentIndex));
   }
   let url = `${apiUrl}?${searchParams.toString()}`;
-
-  if (number || lastCompany !== company) {
-    currentIndex = 0;
-    lastCompany = company;
-  } else {
-    currentIndex++;
-  }
 
   try {
     const response = await fetch(url);

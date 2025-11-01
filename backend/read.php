@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
             $reverseIndex = count($data) - 1 - $index;
             $line = $data[$reverseIndex] ?? $data[0];
         } else {
-            $line = $data[0];
+            $line = end($data);
         }
         [$branch, $commit] = explode(";", $line, 2) + [null, null];
     } else {

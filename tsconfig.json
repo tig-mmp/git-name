@@ -1,15 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
-    "rootDirs": ["src/", "test/"],
-    "outDir": "./dist",
+    "target": "esnext",
+    "module": "es2020",
+    "moduleResolution": "node",
     "strict": true,
-    "types": ["node", "jest", "jsdom"],
     "esModuleInterop": true,
-    "allowJs": true,
-    "moduleResolution": "node"
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "jsx": "react-jsx",
+    "outDir": "dist",
+    "rootDirs": ["src/", "test/"],
+    "types": ["node", "jest", "jsdom"],
+    "allowJs": true
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

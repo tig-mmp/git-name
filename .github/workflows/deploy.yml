@@ -25,22 +25,24 @@ jobs:
       - name: Build (yarn)
         run: yarn build
 
-      - name: Add SSH key and known_hosts
+      - name: Install sshpass and add known_hosts
         run: |
+          sudo apt-get update && sudo apt-get install -y sshpass
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Deploy `dist/` and `backend/` via rsync
+      - name: Deploy `dist/` and `backend/` via rsync (password auth)
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_TARGET: ${{ secrets.SSH_TARGET }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
-          # Sync frontend build
-          rsync -az --delete --rsync-path="mkdir -p $SSH_TARGET && rsync" ./dist/ $SSH_USER@$SSH_HOST:$SSH_TARGET
+          # Sync frontend build using sshpass
+          rsync -az -e "sshpass -p \"$SSH_PASSWORD\" ssh -o StrictHostKeyChecking=no -l $SSH_USER" \
+            --delete --rsync-path="mkdir -p $SSH_TARGET && rsync" ./dist/ $SSH_HOST:$SSH_TARGET
 
           # Sync backend: include only PHP files (exclude Dockerfile, data, env, etc.)
-          rsync -az --delete --rsync-path="mkdir -p $SSH_TARGET/backend && rsync" \
-            --include='*/' --include='*.php' --exclude='*' ./backend/ $SSH_USER@$SSH_HOST:$SSH_TARGET/backend
+          rsync -az -e "sshpass -p \"$SSH_PASSWORD\" ssh -o StrictHostKeyChecking=no -l $SSH_USER" \
+            --delete --rsync-path="mkdir -p $SSH_TARGET/backend && rsync" \
+            --include='*/' --include='*.php' --exclude='*' ./backend/ $SSH_HOST:$SSH_TARGET/backend

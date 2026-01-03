@@ -1,0 +1,46 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
+
+      - name: Install dependencies (yarn)
+        run: yarn install --frozen-lockfile
+
+      - name: Build (yarn)
+        run: yarn build
+
+      - name: Add SSH key and known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy `dist/` and `backend/` via rsync
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_TARGET: ${{ secrets.SSH_TARGET }}
+        run: |
+          # Sync frontend build
+          rsync -az --delete --rsync-path="mkdir -p $SSH_TARGET && rsync" ./dist/ $SSH_USER@$SSH_HOST:$SSH_TARGET
+
+          # Sync backend: include only PHP files (exclude Dockerfile, data, env, etc.)
+          rsync -az --delete --rsync-path="mkdir -p $SSH_TARGET/backend && rsync" \
+            --include='*/' --include='*.php' --exclude='*' ./backend/ $SSH_USER@$SSH_HOST:$SSH_TARGET/backend

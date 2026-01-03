@@ -10,7 +10,8 @@ services:
     ports:
       - 7890:5173
     volumes:
-      - .:/usr/src/app
+      - .:/usr/src/app:cached
+      - node_modules:/usr/src/app/node_modules
     working_dir: /usr/src/app
 
 
@@ -25,3 +26,7 @@ services:
       - ./backend:/var/www
     working_dir: /var/www
     command: php -S 0.0.0.0:8000
+
+volumes:
+  node_modules:
+    driver: local

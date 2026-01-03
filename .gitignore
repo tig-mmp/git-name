@@ -25,4 +25,5 @@ dist-ssr
 .env
 backend/data.txt
 backend/.env
+backend/.env.production
 .env.production

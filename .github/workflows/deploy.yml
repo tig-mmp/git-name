@@ -23,6 +23,8 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build (yarn)
+        env:
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
         run: yarn build
 
       - name: Install sshpass and add known_hosts
@@ -43,6 +45,7 @@ jobs:
             --delete --rsync-path="mkdir -p $SSH_TARGET && rsync" ./dist/ $SSH_HOST:$SSH_TARGET
 
           # Sync backend: include only PHP files (exclude Dockerfile, data, env, etc.)
-          rsync -az -e "sshpass -p \"$SSH_PASSWORD\" ssh -o StrictHostKeyChecking=no -l $SSH_USER" \
-            --delete --rsync-path="mkdir -p $SSH_TARGET/backend && rsync" \
+          # Do NOT use --delete for backend so runtime files (e.g. data.txt) are preserved on the server
+          rsync -az --ignore-existing -e "sshpass -p \"$SSH_PASSWORD\" ssh -o StrictHostKeyChecking=no -l $SSH_USER" \
+            --rsync-path="mkdir -p $SSH_TARGET/backend && rsync" \
             --include='*/' --include='*.php' --exclude='*' ./backend/ $SSH_HOST:$SSH_TARGET/backend

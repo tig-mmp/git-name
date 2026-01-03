@@ -14,10 +14,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $formattedData = "$branch;$commit" . PHP_EOL;
 
-        $file = "data.txt";
-        file_put_contents($file, $formattedData, FILE_APPEND | LOCK_EX);
+        $file = __DIR__ . "/data.txt";
 
-        echo json_encode(["status" => "success", "message" => "Data saved successfully."]);
+        if (!is_writable(dirname($file))) {
+            http_response_code(500);
+            echo json_encode(["status" => "error", "message" => "Directory not writable"]);
+            exit;
+        }
+
+        $bytes = file_put_contents($file, $formattedData, FILE_APPEND | LOCK_EX);
+        if ($bytes === false) {
+            $err = error_get_last();
+            http_response_code(500);
+            echo json_encode(["status" => "error", "message" => "Write failed", "detail" => $err]);
+        } else {
+            echo json_encode(["status" => "success", "message" => "Data saved successfully.", "bytes" => $bytes]);
+        }
     } else {
         echo json_encode(["status" => "error", "message" => "Branch and commit are required."]);
     }

@@ -1,4 +1,6 @@
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL =
+  (import.meta.env.VITE_API_BASE_URL as string) ?? "http://localhost:8000";
+import { buildBranchAndCommit } from "./lib/gitname";
 
 interface Elements {
   usernameInput?: HTMLInputElement;
@@ -33,31 +35,20 @@ export const generate = (): void => {
   const username = usernameInput.value;
   const company = companyInput.value;
   const number = numberInput.value;
-  let feature = featureInput.value.replace("  ", " ").trim();
-  if (feature.endsWith(".")) {
-    feature = feature.slice(0, -1).trim();
-  }
-  const featureCase = convertCase(feature);
-
-  const branch = `users/${username}/${company}-${number}/${featureCase}`;
-  const commit = `[${company}-${number}]/${feature}`;
+  const feature = featureInput.value;
+  const { branch, commit } = buildBranchAndCommit(
+    username,
+    company,
+    number,
+    feature
+  );
 
   branchParagraph.innerText = branch;
   commitParagraph.innerText = commit;
   updateBackend(branch, commit);
 };
 
-const convertCase = (input?: string): string => {
-  if (!input) {
-    return "";
-  }
-  const words = input.replace(/[/:*"<>|\\]/g, "").split(/\s+/);
-  const firstWord = words.shift();
-  return [
-    firstWord,
-    ...words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)),
-  ].join("");
-};
+// `convertCase` is implemented in `src/lib/gitname.ts` and imported where needed.
 
 const mounted = () => {
   const {

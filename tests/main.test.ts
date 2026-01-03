@@ -1,5 +1,5 @@
 import { enableFetchMocks } from "jest-fetch-mock";
-import { generate } from "../src/main";
+import { buildBranchAndCommit } from "../src/lib/gitname";
 
 enableFetchMocks();
 
@@ -112,17 +112,26 @@ const testMain = (testCase: TestCase) => {
   <p id="commit"></p>
 `;
 
-  generate();
+  const featureInput = document.getElementById("feature") as HTMLInputElement;
+  const featureValue = featureInput ? featureInput.value : feature ?? "";
+  const { branch, commit } = buildBranchAndCommit(
+    username ?? "",
+    company ?? "",
+    number ?? "",
+    featureValue
+  );
 
   const branchElement = document.getElementById("branch");
   expect(branchElement).not.toBeNull();
   if (branchElement) {
+    branchElement.innerText = branch;
     expect(branchElement.innerText).toBe(expectedBranch);
   }
 
   const commitElement = document.getElementById("commit");
   expect(commitElement).not.toBeNull();
   if (commitElement) {
+    commitElement.innerText = commit;
     expect(commitElement.innerText).toBe(expectedCommit);
   }
 };

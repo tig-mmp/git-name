@@ -97,13 +97,7 @@ You have **two options**: using Docker (recommended for consistency), or running
 
    - Open your browser and go to the URL shown in the console (usually http://localhost:5173/).
 
-   - Vite will hot-reload the app as you edit files.
-
----
-
 ### ⚙️ Technologies Used
-
-- Node.js (LTS)
 
 - Yarn as the package manager
 
@@ -121,8 +115,6 @@ You have **two options**: using Docker (recommended for consistency), or running
   docker build -t git-name-image .
   ```
 
-- Run the app (if Docker is running and Dockerfile exists):
-
   ```bash
   docker compose up
   ```
@@ -132,6 +124,36 @@ You have **two options**: using Docker (recommended for consistency), or running
   ```bash
   docker compose down
   ```
+
+---
+
+## Deployment
+
+This repository includes a GitHub Actions workflow that builds the frontend and deploys the `dist/` output to a remote server via SSH/rsync on pushes to the `main` branch.
+
+Secrets to add in your repository settings (Settings → Secrets):
+
+- `SSH_PRIVATE_KEY`: The private SSH key (PEM) for the deploy user. Do NOT add a passphrase.
+- `SSH_HOST`: The host or IP of the target server (e.g. `example.com`).
+- `SSH_USER`: The username to connect as (e.g. `www-data` or `deploy`).
+- `SSH_TARGET`: The remote target directory (e.g. `/var/www/html/my-site`).
+
+Workflow file: `.github/workflows/deploy.yml` — it:
+
+- Runs `npm ci` and `npm run build` on `main` pushes.
+- Uses `rsync` to sync `./dist/` to the `SSH_TARGET` path on the remote host.
+
+Quick local test (from a machine that has SSH access to the server):
+
+```bash
+# Build locally
+npm ci && npm run build
+
+# Sync to server (replace variables before running)
+rsync -az --delete ./dist/ deploy@your-server:/var/www/html/my-site
+```
+
+If you need the workflow to run on a different branch, or to build a different directory, edit `.github/workflows/deploy.yml` accordingly.
 
 - See running containers:
 

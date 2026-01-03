@@ -42,7 +42,8 @@ jobs:
         run: |
           # Sync frontend build using sshpass
           rsync -az -e "sshpass -p \"$SSH_PASSWORD\" ssh -o StrictHostKeyChecking=no -l $SSH_USER" \
-            --delete --rsync-path="mkdir -p $SSH_TARGET && rsync" ./dist/ $SSH_HOST:$SSH_TARGET
+            --delete --rsync-path="mkdir -p $SSH_TARGET && rsync" \
+            --exclude='backend/**' ./dist/ $SSH_HOST:$SSH_TARGET
 
           # Sync backend: include only PHP files (exclude Dockerfile, data, env, etc.)
           # Do NOT use --delete for backend so runtime files (e.g. data.txt) are preserved on the server
